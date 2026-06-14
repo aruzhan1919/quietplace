@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Удалить цитату?</h1>
+<div style="background: var(--bg-cream-deep); border-radius: 12px; padding: 16px 18px; margin-bottom: 24px; font-family: 'Lora', serif; font-style: italic; color: var(--text);">
+    {{ quote.text }}
+</div>
+<form method="post">
+    {% csrf_token %}
+    <div style="display: flex; gap: 10px;">
+        <a href="{% url 'book_detail' quote.book.pk %}" class="btn-ghost" style="flex: 1; text-align: center;">отмена</a>
+        <button type="submit" class="btn-soft danger" style="flex: 1;">да, удалить</button>
+    </div>
+</form>
+{% endblock %}

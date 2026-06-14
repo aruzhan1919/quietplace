@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Новая запись{% endblock %}
+
+{% block content %}
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    <a href="{% url 'entry_list' %}" style="color: var(--text-soft); display: flex; align-items: center;">
+        <i class="ti ti-x" style="font-size: 24px;"></i>
+    </a>
+    <span style="font-size: 13px; color: var(--text-faint);">{% now "d M, H:i"|lower %}</span>
+</div>
+
+<form method="post" class="app-form entry-form">
+    {% csrf_token %}
+
+    <div class="field">
+        {{ form.text }}
+        {% if form.text.errors %}
+            <div class="errors">{{ form.text.errors|join:", " }}</div>
+        {% endif %}
+    </div>
+
+    <div class="entry-form-options">
+        <div class="field">
+            <label>{{ form.kind.label }}</label>
+            {{ form.kind }}
+        </div>
+
+        <div class="field">
+            <label>{{ form.book.label }}</label>
+            {{ form.book }}
+        </div>
+    </div>
+
+    <button type="submit" class="btn-soft">Сохранить</button>
+</form>
+{% endblock %}

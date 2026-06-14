@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Регистрация — Quiet Place{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-brand">quiet place</div>
+    <p class="auth-tagline">тихое место для книг и мыслей</p>
+
+    <h1>Здравствуй.</h1>
+
+    <form method="post" class="app-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="field">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="errors">{{ field.errors|join:", " }}</div>
+                {% endif %}
+                {% if field.help_text %}
+                    <div class="errors" style="color: var(--text-faint);">{{ field.help_text|safe }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn-soft">Создать аккаунт</button>
+    </form>
+
+    <p class="auth-switch">
+        Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Рецензия на «{{ book.title }}»{% endblock %}
+
+{% block content %}
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+    <a href="{% url 'book_detail' book.pk %}" style="color: var(--text-soft); display: flex; align-items: center;">
+        <i class="ti ti-x" style="font-size: 24px;"></i>
+    </a>
+    <span style="font-size: 12px; color: var(--text-faint);">рецензия</span>
+</div>
+
+<div class="review-book-strip">
+    <div class="reading-cover" style="background: {{ book.placeholder_color }}">
+        {% if book.cover %}
+            <img src="{{ book.cover.url }}" alt="{{ book.title }}">
+        {% else %}
+            <span>{{ book.initials }}</span>
+        {% endif %}
+    </div>
+    <div>
+        <p class="reading-title" style="font-size: 14px;">{{ book.title }}</p>
+        {% if book.author %}<p class="reading-author">{{ book.author }}</p>{% endif %}
+    </div>
+</div>
+
+<form method="post" class="app-form entry-form">
+    {% csrf_token %}
+
+    <div class="field">
+        {{ form.text }}
+        {% if form.text.errors %}
+            <div class="errors">{{ form.text.errors|join:", " }}</div>
+        {% endif %}
+    </div>
+
+    <div class="review-rating-row">
+        <label>оценка (опционально)</label>
+        {{ form.rating }}
+    </div>
+
+    <button type="submit" class="btn-soft">Сохранить</button>
+</form>
+{% endblock %}

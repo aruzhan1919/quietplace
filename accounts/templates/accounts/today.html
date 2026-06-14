@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Сегодня — Quiet Place{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom: 2px;">Привет.</h1>
+<p style="color: var(--text-faint); font-size: 13px; margin: 0 0 28px;">{{ time_of_day }}</p>
+
+<a href="{% url 'entry_add' %}" class="capture-card">
+    <div class="capture-icon">
+        <i class="ti ti-feather"></i>
+    </div>
+    <div>
+        <p class="capture-title">Записать мысль</p>
+        <p class="capture-sub">история или инсайт — потом</p>
+    </div>
+</a>
+
+{% if reading_books %}
+    <p class="section-label">сейчас читаешь</p>
+    <div class="reading-strip">
+        {% for book in reading_books %}
+            <a href="{% url 'book_detail' book.pk %}" class="reading-card">
+                <div class="reading-cover" style="background: {{ book.placeholder_color }}">
+                    {% if book.cover %}
+                        <img src="{{ book.cover.url }}" alt="{{ book.title }}">
+                    {% else %}
+                        <span>{{ book.initials }}</span>
+                    {% endif %}
+                </div>
+                <div class="reading-info">
+                    <p class="reading-title">{{ book.title }}</p>
+                    {% if book.author %}<p class="reading-author">{{ book.author }}</p>{% endif %}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if recent_entries %}
+    <p class="section-label">последнее</p>
+    <div class="entry-feed">
+        {% for entry in recent_entries %}
+            <a href="{% url 'entry_detail' entry.pk %}" class="entry-card entry-card-{{ entry.kind }}">
+                {% if entry.kind == 'insight' %}
+                    <p class="entry-insight-text">{{ entry.text|truncatechars:160 }}</p>
+                {% else %}
+                    <p class="entry-first-line">{{ entry.first_line|truncatechars:60 }}</p>
+                    {% if entry.text|length > entry.first_line|length %}
+                        <p class="entry-preview">{{ entry.text|truncatechars:120 }}</p>
+                    {% endif %}
+                {% endif %}
+                <div class="entry-meta">
+                    <span>{{ entry.created_at|date:"d M, H:i"|lower }}</span>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if not reading_books and not recent_entries %}
+    <div style="padding: 30px 20px; text-align: center; color: var(--text-faint); font-style: italic; font-family: 'Lora', serif;">
+        Здесь будут твои книги и мысли — когда появятся.
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Quiet Place{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+    <link href="{% static 'css/app.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="app-shell">
+        {% if user.is_authenticated %}
+        <header class="app-header">
+            <div class="app-header-inner">
+                <a href="{% url 'today' %}" class="app-brand">quiet place</a>
+                <form method="post" action="{% url 'logout' %}" class="app-avatar-form">
+                    {% csrf_token %}
+                    <button type="submit" class="app-avatar" title="Выйти">
+                        {{ user.username|slice:":1"|upper }}
+                    </button>
+                </form>
+            </div>
+        </header>
+        {% endif %}
+
+        <main class="app-main">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="app-message app-message-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        {% if user.is_authenticated %}
+        <nav class="app-nav">
+            <a href="{% url 'today' %}" class="app-nav-item {% if request.resolver_match.url_name == 'today' %}is-active{% endif %}">
+                <i class="ti ti-sun"></i>
+                <span>сегодня</span>
+            </a>
+            <a href="{% url 'book_list' %}" class="app-nav-item {% if request.resolver_match.url_name == 'book_list' %}is-active{% endif %}">
+                <i class="ti ti-book-2"></i>
+                <span>книги</span>
+            </a>
+            <a href="{% url 'entry_list' %}" class="app-nav-item {% if request.resolver_match.url_name == 'entry_list' %}is-active{% endif %}">
+                <i class="ti ti-notebook"></i>
+                <span>дневник</span>
+            </a>
+        </nav>
+        {% endif %}
+    </div>
+</body>
+</html>

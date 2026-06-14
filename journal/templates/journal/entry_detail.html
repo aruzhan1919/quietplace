@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}{{ object.preview }}{% endblock %}
+
+{% block content %}
+<a href="{% url 'entry_list' %}" 
+   style="color: var(--text-soft); display: inline-flex; align-items: center; gap: 6px; font-size: 14px; margin-bottom: 16px;">
+    <i class="ti ti-arrow-left"></i> дневник
+</a>
+
+<div class="entry-detail">
+    <div class="entry-detail-meta">
+        <span>{{ object.created_at|date:"d F Y, H:i"|lower }}</span>
+        {% if object.kind != 'note' %}
+            <span class="entry-kind-tag">{{ object.kind_label|lower }}</span>
+        {% endif %}
+    </div>
+
+    <div class="entry-detail-text">{{ object.text|linebreaks }}</div>
+
+    {% if object.book %}
+        <a href="{% url 'book_detail' object.book.pk %}" class="entry-book-link">
+            <i class="ti ti-book"></i> {{ object.book.title }}
+        </a>
+    {% endif %}
+
+    <div class="book-actions">
+        <a href="{% url 'entry_edit' object.pk %}" class="btn-ghost">
+            <i class="ti ti-pencil"></i> редактировать
+        </a>
+        <a href="{% url 'entry_delete' object.pk %}" class="btn-ghost danger">
+            <i class="ti ti-trash"></i> удалить
+        </a>
+    </div>
+</div>
+{% endblock %}

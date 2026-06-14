@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Книги — Quiet Place{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom: 16px;">Книги</h1>
+
+<div class="filter-chips">
+    <a href="{% url 'book_list' %}" class="chip {% if not current_status %}is-active{% endif %}">все</a>
+    <a href="?status=wishlist" class="chip {% if current_status == 'wishlist' %}is-active{% endif %}">хочу</a>
+    <a href="?status=reading" class="chip {% if current_status == 'reading' %}is-active{% endif %}">читаю</a>
+    <a href="?status=finished" class="chip {% if current_status == 'finished' %}is-active{% endif %}">прочитано</a>
+</div>
+
+{% if books %}
+    <div class="book-grid">
+        {% for book in books %}
+            <a href="{% url 'book_detail' book.pk %}" class="book-card">
+                <div class="book-cover" style="background: {{ book.placeholder_color }}">
+                    {% if book.cover %}
+                        <img src="{{ book.cover.url }}" alt="{{ book.title }}">
+                    {% else %}
+                        <span class="book-initials">{{ book.initials }}</span>
+                    {% endif %}
+                    <span class="book-status">{{ book.status_label|lower }}</span>
+                </div>
+                <p class="book-title">{{ book.title }}</p>
+                {% if book.author %}<p class="book-author">{{ book.author }}</p>{% endif %}
+            </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <i class="ti ti-books"></i>
+        <p>{% if current_status %}в этом разделе пусто{% else %}пока нет книг{% endif %}</p>
+        <p class="empty-hint">добавлять прямо из приложения сможешь в следующем шаге</p>
+    </div>
+{% endif %}
+
+<a href="{% url 'book_add' %}" class="fab" title="Добавить книгу">
+    <i class="ti ti-plus"></i>
+</a>
+{% endblock %}

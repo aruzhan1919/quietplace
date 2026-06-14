@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Удалить рецензию?</h1>
+<p style="color: var(--text-soft); margin-bottom: 24px;">
+    Рецензия на «{{ book.title }}» исчезнет. Сама книга останется.
+</p>
+<form method="post">
+    {% csrf_token %}
+    <div style="display: flex; gap: 10px;">
+        <a href="{% url 'book_detail' book.pk %}" class="btn-ghost" style="flex: 1; text-align: center;">отмена</a>
+        <button type="submit" class="btn-soft danger" style="flex: 1;">да, удалить</button>
+    </div>
+</form>
+{% endblock %}

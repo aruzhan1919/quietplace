@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}{{ book.title }} — Quiet Place{% endblock %}
+
+{% block content %}
+<a href="{% url 'book_list' %}" 
+   style="color: var(--text-soft); display: inline-flex; align-items: center; gap: 6px; font-size: 14px; margin-bottom: 16px;">
+    <i class="ti ti-arrow-left"></i> книги
+</a>
+
+<div class="book-detail">
+    <div class="book-detail-cover" style="background: {{ book.placeholder_color }}">
+        {% if book.cover %}
+            <img src="{{ book.cover.url }}" alt="{{ book.title }}">
+        {% else %}
+            <span class="book-initials" style="font-size: 56px;">{{ book.initials }}</span>
+        {% endif %}
+    </div>
+
+    <h1 style="margin: 20px 0 4px;">{{ book.title }}</h1>
+    {% if book.author %}
+        <p style="color: var(--text-soft); margin: 0 0 20px;">{{ book.author }}</p>
+    {% endif %}
+
+    <div class="status-segments">
+        <a href="?set_status=wishlist" class="seg {% if book.status == 'wishlist' %}is-active{% endif %}">хочу</a>
+        <a href="?set_status=reading" class="seg {% if book.status == 'reading' %}is-active{% endif %}">читаю</a>
+        <a href="?set_status=finished" class="seg {% if book.status == 'finished' %}is-active{% endif %}">прочитано</a>
+    </div>
+
+    {% if book.started_at or book.finished_at %}
+        <div class="book-dates">
+            {% if book.started_at %}<p><span>начал:</span> {{ book.started_at }}</p>{% endif %}
+            {% if book.finished_at %}<p><span>закончил:</span> {{ book.finished_at }}</p>{% endif %}
+        </div>
+    {% endif %}
+
+    <div class="book-section">
+        <div class="book-section">
+    <div class="book-section-header">
+        <h3>Цитаты и заметки</h3>
+        <a href="{% url 'quote_add' book.pk %}" class="section-action" title="Добавить цитату">
+            <i class="ti ti-plus"></i>
+        </a>
+    </div>
+
+    {% if book.quotes.all %}
+        <div class="quote-list">
+            {% for quote in book.quotes.all %}
+                <div class="quote-card">
+                    <p class="quote-text">{{ quote.text }}</p>
+                    <div class="quote-meta">
+                        <span>
+                            {{ quote.created_at|date:"d M"|lower }}
+                            {% if quote.page %} · стр. {{ quote.page }}{% endif %}
+                        </span>
+                        <a href="{% url 'quote_delete' quote.pk %}" class="quote-delete" title="Удалить">
+                            <i class="ti ti-x"></i>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color: var(--text-faint); font-style: italic; font-family: 'Lora', serif; font-size: 14px;">
+            пока пусто — добавляй цитаты, когда что-то зацепит
+        </p>
+    {% endif %}
+</div>
+    <div class="book-section-header">
+        <h3>Рецензия</h3>
+        {% if book.status == 'finished' and book.review %}
+            <a href="{% url 'review_edit' book.pk %}" class="section-action">
+                <i class="ti ti-pencil"></i>
+            </a>
+        {% endif %}
+    </div>
+
+    {% if book.review %}
+        <div class="review-block">
+            {% if book.review.rating %}
+                <p class="review-rating">{{ book.review.rating }}<span>/10</span></p>
+            {% endif %}
+            <div class="review-text">{{ book.review.text|linebreaks }}</div>
+            <p class="review-date">{{ book.review.updated_at|date:"d F Y"|lower }}</p>
+            <a href="{% url 'review_delete' book.pk %}" class="review-delete">
+                <i class="ti ti-trash"></i> удалить рецензию
+            </a>
+        </div>
+    {% elif book.status == 'finished' %}
+        <a href="{% url 'review_add' book.pk %}" class="btn-soft" style="margin-top: 8px;">
+            Написать рецензию
+        </a>
+    {% else %}
+        <p style="color: var(--text-faint); font-style: italic; font-family: 'Lora', serif;">
+            Рецензию напишешь, когда закончишь — не торопись.
+        </p>
+    {% endif %}
+</div>
+
+    <div class="book-actions">
+        <a href="{% url 'book_edit' book.pk %}" class="btn-ghost">
+            <i class="ti ti-pencil"></i> редактировать
+        </a>
+        <a href="{% url 'book_delete' book.pk %}" class="btn-ghost danger">
+            <i class="ti ti-trash"></i> удалить
+        </a>
+    </div>
+</div>
+{% endblock %}
